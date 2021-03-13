@@ -15,8 +15,8 @@ function pollYoutube() {
     })
     .then(res => res.json())
     .then(body => {
-      body.items.forEach(async function (element) {
-        const snippet = element.snippet;
+      body.items.forEach(async function (params) {
+        const snippet = params.snippet;
         const data = {
           isLive: snippet.liveBroadcastContent == 'live',
           platform: 'youtube',
@@ -44,20 +44,20 @@ function pollTwitch() {
     })
     .then(res => res.json())
     .then(body => {
-      body.data.forEach(async function (element) {
-        const url = element.thumbnail_url.replace('%{width}x%{height}', '320x180');
+      body.data.forEach(async function (params) {
+        const url = params.thumbnail_url.replace('%{width}x%{height}', '320x180');
         const data = {
-          isLive: element.thumbnail_url.length == 0,
+          isLive: params.thumbnail_url.length == 0,
           platform: 'twitch',
-          publishTime: element.published_at,
+          publishTime: params.published_at,
           thumbnail: url,
-          title: element.title
+          title: params.title
         };
         const ref = await db.collection('videoes');
         const snapshot = await ref.limit(1).get(); // snapshot: doc
         snapshot.forEach(element => {
-          if (new Date(data.publishTime).getTime() > new Date(element.data().publishTime).getTime()) {
-            db.collection('videoes').doc(snippet.title).set(data);
+          if (new Date(data.publishTime).getTime() > new Date(params.published_at).getTime()) {
+            db.collection('videoes').doc(element.snippet.title).set(data);
           }
         });
       });
@@ -67,9 +67,9 @@ function pollTwitch() {
 function checkLive() {}
 
 /* Update DB. */
-router.put('/', async function (req, res, next) {
+router.get('/', async function (req, res, next) {
   await pollYoutube();
-  await pollTwitc();
+  await pollTwitch();
   checkLive();
   res.send('hello');
 });
