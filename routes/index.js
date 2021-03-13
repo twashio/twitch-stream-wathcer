@@ -5,7 +5,7 @@ var Firestore = require('@google-cloud/firestore');
 // setup Firestore
 const db = new Firestore({
   projectId: 'jk-live-info',
-  keyFilename: '/key.json',
+  keyFilename: './key.json',
 });
 
 class videoDataClass {
