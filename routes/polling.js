@@ -20,14 +20,14 @@ function pollYoutube() {
         const data = {
           isLive: snippet.liveBroadcastContent == 'live',
           platform: 'youtube',
-          publishTime: snippet.publishTime,
+          publishTime: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
           thumbnail: snippet.thumbnails.medium.url,
           title: snippet.title
         };
         const ref = await db.collection('videoes');
-        const snapshot = await ref.limit(1).get(); // snapshot: doc
+        const snapshot = await ref.limit(1).get(); 
         snapshot.forEach(element => {
-          if (new Date(data.publishTime).getTime() > new Date(element.data().publishTime).getTime()) {
+          if (data.publishTime._seconds > element.data().publishTime._seconds) {
             db.collection('videoes').doc(snippet.title).set(data);
           }
         });
@@ -49,15 +49,15 @@ function pollTwitch() {
         const data = {
           isLive: params.thumbnail_url.length == 0,
           platform: 'twitch',
-          publishTime: params.published_at,
+          publishTime: Firestore.Timestamp.fromDate(new Date(params.published_at)),
           thumbnail: url,
           title: params.title
         };
         const ref = await db.collection('videoes');
-        const snapshot = await ref.limit(1).get(); // snapshot: doc
+        const snapshot = await ref.limit(1).get();
         snapshot.forEach(element => {
-          if (new Date(data.publishTime).getTime() > new Date(params.published_at).getTime()) {
-            db.collection('videoes').doc(element.snippet.title).set(data);
+          if (data.publishTime._seconds > element.data().publishTime._seconds) {
+            db.collection('videoes').doc(data.title).set(data);
           }
         });
       });
