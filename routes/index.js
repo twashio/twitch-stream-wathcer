@@ -21,7 +21,7 @@ class videoDataClass {
 async function getVideoes() {
   var videoes = [];
   const ref = await db.collection('videoes');
-  const snapshot = await ref.limit(10).get();
+  const snapshot = await ref.orderBy('publishTime', 'desc').limit(10).get();
   await snapshot.forEach(element => {
     const data = element.data();
     videoes.push(new videoDataClass(data.isLive, data.platform, data.publishTime, data.thumbnail, data.title));

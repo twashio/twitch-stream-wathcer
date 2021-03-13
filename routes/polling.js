@@ -25,7 +25,7 @@ function pollYoutube() {
           title: snippet.title
         };
         const ref = await db.collection('videoes');
-        const snapshot = await ref.limit(1).get(); 
+        const snapshot = await ref.orderBy('publishTime', 'desc').limit(1).get(); 
         snapshot.forEach(element => {
           if (data.publishTime._seconds > element.data().publishTime._seconds) {
             db.collection('videoes').doc(snippet.title).set(data);
@@ -54,7 +54,7 @@ function pollTwitch() {
           title: params.title
         };
         const ref = await db.collection('videoes');
-        const snapshot = await ref.limit(1).get();
+        const snapshot = await ref.orderBy('publishTime', 'desc').limit(1).get();
         snapshot.forEach(element => {
           if (data.publishTime._seconds > element.data().publishTime._seconds) {
             db.collection('videoes').doc(data.title).set(data);
