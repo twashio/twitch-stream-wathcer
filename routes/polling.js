@@ -10,7 +10,7 @@ const db = new Firestore({
 });
 
 function pollYoutube() {
-  fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyAiNMNazsWyfbElhKBBv-p2O_gWjvtpP_c&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=1', {
+  fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyBkr-SejepuFqxmahrKAeAjuuXu-FVRPYk&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=1', {
       method: "GET"
     })
     .then(res => res.json())
@@ -67,11 +67,10 @@ function pollTwitch() {
 function checkLive() {}
 
 /* Update DB. */
-router.get('/', async function (req, res, next) {
+router.put('/', async function (req, res, next) {
   await pollYoutube();
   await pollTwitch();
   checkLive();
-  res.send('hello');
 });
 
 module.exports = router;
