@@ -21,7 +21,7 @@ class videoDataClass {
 async function getVideoes() {
   var videoes = [];
   const ref = await db.collection('videoes');
-  const snapshot = await ref.orderBy('publishTime', 'desc').limit(10).get();
+  const snapshot = await ref.orderBy('publishTime', 'desc').limit(9).get();
   await snapshot.forEach(element => {
     const data = element.data();
     videoes.push(new videoDataClass(data.isLive, data.platform, data.publishTime, data.thumbnail, data.title));
@@ -32,7 +32,12 @@ async function getVideoes() {
 /* GET home page. */
 router.get('/', async function (req, res, next) {
   const videoes = await getVideoes();
-  const isLive = videoes[0].isLive;
+  var isLive = false;
+  videoes.forEach(video => {
+    if (video.isLive) {
+      isLive = true;
+    }
+  });
   res.render('index', {
     isLive: isLive,
     videoes: videoes

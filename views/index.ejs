@@ -1,12 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html　lang="ja">
 
 <head>
-  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="加藤純一の配信情報をっチェックできます。">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <title>加藤純一ライブ情報</title>
 </head>
 
 <body>
+  <header>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <a class="navbar-brand">加藤純一ライブ情報</a>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">News</a>
+        </li>
+        <!-- 
+          <li class="nav-item">
+            <a class="nav-link" href="#">通知設定</a>
+          </li>
+        -->
+      </ul>
+    </nav>
+  </header>
 
+  <main>
+    <!-- live status -->
+    <div class="py-5 text-center container">
+      <% if (isLive == true) { %>
+      <p class="h4">加藤純一さんは現在配信中です。</p>
+      <% } else { %>
+      <p class="h4">現在加藤純一さんは配信してないようです。</p>
+      <% } %>
+    </div>
+
+    <!-- video windows -->
+    <div class="album py-5 bg-light">
+      <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+          <% videoes.forEach(video => { %>
+          <div class="col">
+            <div class="card shadow-sm">
+              <img src=<%- video.thumbnail %> class="bd-placeholder-img card-img-top" width="100%">
+              <div class="card-body">
+                <% if (video.isLive) { %>
+                <p class="card-text"><span style="color: red;" class="strong">Live</span>【 <%- video.platform %> 】<%- video.title %></p>
+                <% } else { %>
+                <p class="card-text">【 <%- video.platform %> 】<%- video.title %></p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- foooter -->
+  <footer class="text-muted py-5">
+    <div class="container">
+      <p>Tomcaaaaat 2021</p>
+    </div>
+  </footer>
+
+  <!-- script -->
+  <script src="/docs/5.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous">
+  </script>
 </body>
 
 </html>
