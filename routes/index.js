@@ -9,12 +9,12 @@ const db = new Firestore({
 });
 
 class videoDataClass {
-  constructor(isLive, platform, publishTime, thumbnail, title) {
-    this.isLive = isLive;
+  constructor(platform, publishTime, thumbnail, title, url) {
     this.platform = platform;
     this.publishTime = publishTime;
     this.thumbnail = thumbnail;
     this.title = title;
+    this.url = url;
   }
 }
 
@@ -24,22 +24,18 @@ async function getVideoes() {
   const snapshot = await ref.orderBy('publishTime', 'desc').limit(9).get();
   await snapshot.forEach(element => {
     const data = element.data();
-    videoes.push(new videoDataClass(data.isLive, data.platform, data.publishTime, data.thumbnail, data.title));
+    videoes.push(new videoDataClass(data.platform, data.publishTime, data.thumbnail, data.title, data.url));
   });
   return videoes;
 }
 
-/* GET home page. */
+// get home page
 router.get('/', async function (req, res, next) {
   const videoes = await getVideoes();
-  var isLive = false;
-  videoes.forEach(video => {
-    if (video.isLive) {
-      isLive = true;
-    }
-  });
+  const ref = await db.collection('liveStatus').doc('liveStatus');
+  const doc = await ref.get();
   res.render('index', {
-    isLive: isLive,
+    isLive: doc.data().isLive,
     videoes: videoes
   });
 });
