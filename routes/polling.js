@@ -37,20 +37,22 @@ function pollYoutube() {
         } catch (error) {}
 
         // update videoes
-        const data = {
-          platform: 'Youtube',
-          publishTime: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
-          thumbnail: snippet.thumbnails.medium.url,
-          title: snippet.title,
-          url: 'https://www.youtube.com/watch?v=' + params.id.videoId
-        };
-        const videoesRef = await db.collection('videoes');
-        const snapshot = await videoesRef.orderBy('publishTime', 'desc').limit(1).get();
-        snapshot.forEach(element => {
-          if (data.publishTime._seconds > element.data().publishTime._seconds) {
-            db.collection('videoes').doc(snippet.title).set(data);
-          }
-        });
+        if (snippet.liveBroadcastContent == 'none') {
+          const data = {
+            platform: 'Youtube',
+            publishTime: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
+            thumbnail: snippet.thumbnails.medium.url,
+            title: snippet.title,
+            url: 'https://www.youtube.com/watch?v=' + params.id.videoId
+          };
+          const videoesRef = await db.collection('videoes');
+          const snapshot = await videoesRef.orderBy('publishTime', 'desc').limit(1).get();
+          snapshot.forEach(element => {
+            if (data.publishTime._seconds > element.data().publishTime._seconds) {
+              db.collection('videoes').doc(snippet.title).set(data);
+            }
+          });
+        }
       });
     });
 }
