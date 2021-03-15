@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="加藤純一の配信情報をっチェックできます。">
+  <meta name="description" content="加藤純一の配信情報をチェックできます。">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="/stylesheets/style.css">
   <title>加藤純一ライブ情報</title>
@@ -36,7 +36,7 @@
       <% if (isLive == true) { %>
       <p class="h4">加藤純一さんは現在配信中です。</p>
       <% } else { %>
-      <p class="h4">現在加藤純一さんは配信してないようです。</p>
+      <p class="h4">現在加藤純一さんは配信していないようです。</p>
       <% } %>
     </div>
 
@@ -46,7 +46,7 @@
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
           <% videoes.forEach(video => { %>
           <div class="col py-1">
-            <a href=<%- video.url %>>
+            <a href=<%- video.url %> target="_blank">
               <div class="card shadow-sm">
                 <img src=<%- video.thumbnail %> class="bd-placeholder-img card-img-top" width="100%">
                 <div class="card-body">
