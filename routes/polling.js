@@ -5,12 +5,12 @@ var Firestore = require('@google-cloud/firestore');
 
 // setup Firestore
 const db = new Firestore({
-  projectId: 'jk-live-info-2',
+  projectId: 'unkochan-live-info',
   keyFilename: './key.json',
 });
 
 function pollYoutube() {
-  fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyBGYIn9vxRFH8wtJnzA_CAtjLtbDf5S3Tk&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=1', {
+  fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyDGQRS9YmrXRIhOmPoljDWxkG5G90Dpk6A&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=1', {
       method: "GET"
     })
     .then(res => res.json())
