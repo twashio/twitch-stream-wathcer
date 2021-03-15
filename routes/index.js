@@ -4,7 +4,7 @@ var Firestore = require('@google-cloud/firestore');
 
 // setup Firestore
 const db = new Firestore({
-  projectId: 'jk-live-info',
+  projectId: 'jk-live-info-2',
   keyFilename: './key.json',
 });
 
