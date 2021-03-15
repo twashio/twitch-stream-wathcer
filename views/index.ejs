@@ -12,15 +12,17 @@
 
 <body>
   <header>
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-sm bg-info navbar-dark">
       <a class="navbar-brand">加藤純一ライブ情報</a>
       <ul class="navbar-nav">
+        <!--
         <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
+          <router class="nav-link" id="about">About</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">News</a>
+          <a class="nav-link" id="news">News</a>
         </li>
+        -->
         <!-- 
           <li class="nav-item">
             <a class="nav-link" href="#">通知設定</a>
@@ -34,9 +36,9 @@
     <!-- live status -->
     <div class="py-5 text-center container">
       <% if (isLive == true) { %>
-      <p class="h4">加藤純一さんは現在配信中です。</p>
+      <p class="live-status">加藤純一さんは現在配信中です。</p>
       <% } else { %>
-      <p class="h4">現在加藤純一さんは配信していないようです。</p>
+      <p class="live-status">加藤純一さんは現在配信していないようです。</p>
       <% } %>
     </div>
 
