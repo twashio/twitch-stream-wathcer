@@ -20,8 +20,8 @@ class videoDataClass {
 
 async function getVideoes() {
   var videoes = [];
-  const ref = await db.collection('videoes');
-  const snapshot = await ref.orderBy('publishTime', 'desc').limit(9).get();
+  const videoRef = await db.collection('videoes');
+  const snapshot = await videoRef.orderBy('publishTime', 'desc').limit(9).get();
   await snapshot.forEach(element => {
     const data = element.data();
     videoes.push(new videoDataClass(data.platform, data.publishTime, data.thumbnail, data.title, data.url));
@@ -29,7 +29,7 @@ async function getVideoes() {
   return videoes;
 }
 
-// get home page
+// GET home page
 router.get('/', async function (req, res, next) {
   const videoes = await getVideoes();
   const ref = await db.collection('liveStatus').doc('liveStatus');
