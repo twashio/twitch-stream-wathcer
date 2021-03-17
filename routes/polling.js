@@ -34,7 +34,7 @@ async function pollYoutube() {
         title: snippet.title,
         url: 'https://www.youtube.com/watch?v=' + params.id.videoId
       };
-      db.collection('videoes').doc(snippet.title).set(data);
+      db.collection('videoes').add(data);
     } else {
 
       // update live status
@@ -88,7 +88,7 @@ async function pollTwitch() {
         title: videoData.title,
         url: videoData.url
       };
-      db.collection('videoes').doc(docData.title).set(docData);
+      db.collection('videoes').add(docData);
     } else {
 
       // update live status
