@@ -65,34 +65,36 @@ async function pollTwitch() {
     });
     const videoJson = await videoRes.json();
     const videoData = videoJson.data[0];
-    if (videoData.thumbnail_url == "" && liveStatusDoc.data().isLive == false) {
+    if (videoData.thumbnail_url == "") {
+      if (liveStatusDoc.data().isLive == false) {
 
-      // update live status
-      db.runTransaction(async (transaction) => {
-        transaction.update(liveStatusRef, {
-          isLive: true
+        // update live status
+        db.runTransaction(async (transaction) => {
+          transaction.update(liveStatusRef, {
+            isLive: true
+          });
         });
-      });
 
-      // get thumbnail url
-      const streamRes = await fetch('https://api.twitch.tv/helix/streams?user_id=545050196&first=1', {
-        headers: {
-          'client-id': '5s36fvb8xzlkxyoab9v24nc4iqtv38',
-          'authorization': 'Bearer a38j0sfozk34i37fdgpnula9omwo2s'
-        }
-      });
-      const streamJson = await streamRes.json();
-      const streamThumbnail = streamJson.data[0].thumbnail_url.replace('{width}x{height}', '320x180');
+        // get thumbnail url
+        const streamRes = await fetch('https://api.twitch.tv/helix/streams?user_id=545050196&first=1', {
+          headers: {
+            'client-id': '5s36fvb8xzlkxyoab9v24nc4iqtv38',
+            'authorization': 'Bearer a38j0sfozk34i37fdgpnula9omwo2s'
+          }
+        });
+        const streamJson = await streamRes.json();
+        const streamThumbnail = streamJson.data[0].thumbnail_url.replace('{width}x{height}', '320x180');
 
-      // add stream to DB
-      const docData = {
-        platform: 'Twitch',
-        publishTime: Firestore.Timestamp.fromDate(new Date(videoData.published_at)),
-        thumbnail: streamThumbnail,
-        title: videoData.title,
-        url: videoData.url
-      };
-      db.collection('videoes').add(docData);
+        // add stream to DB
+        const docData = {
+          platform: 'Twitch',
+          publishTime: Firestore.Timestamp.fromDate(new Date(videoData.published_at)),
+          thumbnail: streamThumbnail,
+          title: videoData.title,
+          url: videoData.url
+        };
+        db.collection('videoes').add(docData);
+      }
     } else {
 
       // update live status
