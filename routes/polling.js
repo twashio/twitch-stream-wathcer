@@ -18,24 +18,26 @@ async function pollYoutube() {
     const liveRes = await fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyDGQRS9YmrXRIhOmPoljDWxkG5G90Dpk6A&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=1');
     const liveJson = await liveRes.json();
     const snippet = liveJson.items[0].snippet;
-    if (snippet.liveBroadcastContent == 'live' && liveStatusDoc.data().isLive == false) {
+    if (snippet.liveBroadcastContent == 'live') {
+      if (liveStatusDoc.data().isLive == false) {
 
-      // update live sttus
-      db.runTransaction(async (transaction) => {
-        transaction.update(liveStatusRef, {
-          isLive: true
+        // update live sttus
+        db.runTransaction(async (transaction) => {
+          transaction.update(liveStatusRef, {
+            isLive: true
+          });
         });
-      });
 
-      // add stream to DB
-      const data = {
-        platform: 'Youtube',
-        publishTime: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
-        thumbnail: snippet.thumbnails.medium.url,
-        title: snippet.title,
-        url: 'https://www.youtube.com/watch?v=' + params.id.videoId
-      };
-      db.collection('videoes').add(data);
+        // add stream to DB
+        const data = {
+          platform: 'Youtube',
+          publishTime: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
+          thumbnail: snippet.thumbnails.medium.url,
+          title: snippet.title,
+          url: 'https://www.youtube.com/watch?v=' + params.id.videoId
+        };
+        db.collection('videoes').add(data);
+      }
     } else {
 
       // update live status
