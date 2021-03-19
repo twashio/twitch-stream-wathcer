@@ -1,0 +1,30 @@
+a {
+  color: #000000;
+  text-decoration: none; }
+
+a:visited {
+  color: #000000;
+  text-decoration: none; }
+
+a:hover {
+  color: #000000;
+  text-decoration: none; }
+
+.live-status {
+  font-size: 18px;
+  margin: 0; }
+
+.intro-video {
+  font-size: 18px;
+  text-align: center; }
+
+.Youtube {
+  background-color: #ffcccc; }
+
+.Twitch {
+  background-color: #edc7ff; }
+
+.title {
+  margin: 0; }
+
+/*# sourceMappingURL=index.css.map */
