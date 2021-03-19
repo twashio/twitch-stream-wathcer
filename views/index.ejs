@@ -45,14 +45,16 @@
     <!-- video windows -->
     <div class="album py-5 bg-light">
       <div class="container">
+        <p class="intro-video">こちらもご覧下さい。</p>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
           <% videoes.forEach(video => { %>
           <div class="col py-1">
             <a href=<%- video.url %> target="_blank">
               <div class="card shadow-sm">
                 <img src=<%- video.thumbnail %> class="bd-placeholder-img card-img-top" width="100%">
-                <div class="card-body">
-                  <p class="card-text">【<%- video.platform %>】<%- video.title %></p>
+                <div class="card-body <%- video.platform %> desc">
+                  <p class="card-text title"><%- video.title %></p>
+                  <p class="card-text"><%- video.publishTime %></p>
                 </div>
               </div>
             </a>

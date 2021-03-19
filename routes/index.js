@@ -18,13 +18,27 @@ class videoDataClass {
   }
 }
 
+function getPublishTime(startAt) {
+  const diffSec = Math.floor(new Date().getTime() / 1000) - startAt._seconds;
+  var publishTimeStr = "";
+  if (diffSec < 60 * 60) {
+    publishTimeStr = String(Math.floor(diffSec / 60)) + '分前';
+  } else if (diffSec < 60 * 60 * 24) {
+    publishTimeStr = String(Math.floor(diffSec / (60 * 60))) + '時間前';
+  } else {
+    publishTimeStr = String(Math.floor(diffSec / (60 * 60 * 24))) + '日前';
+  }
+  return publishTimeStr;
+}
+
 async function getVideoes() {
   var videoes = [];
   const videoRef = await db.collection('videoes');
-  const snapshot = await videoRef.orderBy('publishTime', 'desc').limit(9).get();
+  const snapshot = await videoRef.orderBy('publishTime', 'desc').limit(30).get();
   await snapshot.forEach(element => {
     const data = element.data();
-    videoes.push(new videoDataClass(data.platform, data.publishTime, data.thumbnail, data.title, data.url));
+    const publishTimeStr = getPublishTime(data.publishTime);
+    videoes.push(new videoDataClass(data.platform, publishTimeStr, data.thumbnail, data.title, data.url));
   });
   return videoes;
 }
