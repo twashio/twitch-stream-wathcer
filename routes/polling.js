@@ -11,13 +11,14 @@ const db = new Firestore({
 
 async function pollYoutube() {
   const liveStatusRef = await db.collection('liveStatus').doc('liveStatus');
+  const liveStatusDoc = await liveStatusRef.get();
   try {
 
     // send request to Youtube Data API
     const liveRes = await fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyDGQRS9YmrXRIhOmPoljDWxkG5G90Dpk6A&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=1');
     const liveJson = await liveRes.json();
     const snippet = liveJson.items[0].snippet;
-    if (snippet.liveBroadcastContent == 'live') {
+    if (snippet.liveBroadcastContent == 'live' && liveStatusDoc.data().isLive == false) {
 
       // update live sttus
       db.runTransaction(async (transaction) => {
@@ -52,6 +53,7 @@ async function pollYoutube() {
 
 async function pollTwitch() {
   const liveStatusRef = await db.collection('liveStatus').doc('liveStatus');
+  const liveStatusDoc = await liveStatusRef.get();
   try {
     const videoRes = await fetch('https://api.twitch.tv/helix/videos?user_id=545050196&first=1', {
       headers: {
@@ -61,7 +63,7 @@ async function pollTwitch() {
     });
     const videoJson = await videoRes.json();
     const videoData = videoJson.data[0];
-    if (videoData.thumbnail_url == "") {
+    if (videoData.thumbnail_url == "" && liveStatusDoc.data().isLive == false) {
 
       // update live status
       db.runTransaction(async (transaction) => {
