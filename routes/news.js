@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Firestore = require('@google-cloud/firestore');
+var moment = require('moment');
 
 // setup Firestore
 const db = new Firestore({
@@ -21,7 +22,8 @@ async function getNews() {
   const snapshot = await newsRef.orderBy('publishTime', 'desc').get();
   await snapshot.forEach(article => {
     const data = article.data();
-    const publishTime = new Date(data.publishTime._seconds * 1000).toLocaleString();
+    const date = new Date(data.publishTime._seconds * 1000  + ((new Date().getTimezoneOffset() + (9 * 60)) * 60 * 1000));
+    const publishTime = moment(date).format("YYYY/MM/DD HH:mm");
     news.push(new articleClass(data.header, publishTime));
   });
   return news;
