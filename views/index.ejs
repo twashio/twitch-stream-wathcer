@@ -48,9 +48,9 @@
           <% videoes.forEach(video => { %>
           <div class="col py-1">
             <a href=<%- video.url %> target="_blank">
-              <div class="card shadow-sm">
+              <div class="card shadow-sm desc">
                 <img src=<%- video.thumbnail %> class="bd-placeholder-img card-img-top" width="100%">
-                <div class="card-body <%- video.platform %> desc">
+                <div class="card-body <%- video.platform %>">
                   <p class="card-text title"><%- video.title %></p>
                   <p class="card-text"><%- video.publishTime %></p>
                 </div>
