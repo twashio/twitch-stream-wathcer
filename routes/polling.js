@@ -9,13 +9,38 @@ const db = new Firestore({
   keyFilename: './key.json',
 });
 
+async function getYtKey() {
+  var key = "";
+  const keysRef = await db.collection('keys');
+  const snapshot = await keysRef.orderBy('latest_used', 'asc').limit(1).get();
+  await snapshot.forEach(async function (doc) {
+
+    // get api key
+    const keyData = doc.data();
+    key = keyData.key;
+
+    // update latest used time
+    const id = doc.id;
+    const transRef = await db.collection('keys').doc(id);
+    db.runTransaction(async (transaction) => {
+      transaction.update(transRef, {
+        latest_used: Firestore.Timestamp.fromDate(new Date())
+      })
+    })
+  });
+  return key;
+}
+
 async function pollYoutube() {
   const liveStatusRef = await db.collection('liveStatus').doc('liveStatus');
   const liveStatusDoc = await liveStatusRef.get();
+  const key = await getYtKey();
+
   try {
 
     // send request to Youtube Data API
-    const liveRes = await fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyDGQRS9YmrXRIhOmPoljDWxkG5G90Dpk6A&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=1');
+    const request = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=1&key=' + key;
+    const liveRes = await fetch(request);
     const liveJson = await liveRes.json();
     const snippet = liveJson.items[0].snippet;
     if (snippet.liveBroadcastContent == 'live') {
