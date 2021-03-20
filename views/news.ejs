@@ -30,11 +30,17 @@
   </header>
 
   <main>
-
+    <div class="container">
+      <div class="py-5 text-center">
+        <% news.forEach(article => { %>
+        <p><%- article.publishTime %> <%- article.header %></p>
+        <% }) %>
+      </div>
+    </div>
   </main>
 
   <footer class="text-muted py-5">
-    <div class="container">
+    <div class="container text-center">
       <p>Copyright (c) 2021 Tomcaaaaat</p>
     </div>
   </footer>
