@@ -21,7 +21,7 @@ async function getNews() {
   const snapshot = await newsRef.orderBy('publishTime', 'desc').get();
   await snapshot.forEach(article => {
     const data = article.data();
-    const publishTime = new Date(data.publishTime._seconds).toLocaleString();
+    const publishTime = new Date(data.publishTime._seconds * 1000).toLocaleString();
     news.push(new articleClass(data.header, publishTime));
   });
   return news;
