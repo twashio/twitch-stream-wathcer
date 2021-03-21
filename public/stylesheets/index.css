@@ -7,29 +7,36 @@ a:visited {
 a:hover {
   text-decoration: none; }
 
-.live-status {
+.status-text {
   font-size: 18px;
   margin: 0; }
 
-.intro-video {
+.intro-text {
   font-size: 18px; }
 
-.desc-card {
+.col {
+  padding: 4px; }
+
+.card {
   height: 100%; }
+
+.card-body {
+  padding: 12px; }
+
+.card-text {
+  color: white;
+  margin: 0; }
+
+.title-text {
+  font-size: 15px; }
+
+.date-text {
+  font-size: 14px; }
 
 .Youtube {
   background-color: #ff0000; }
 
 .Twitch {
   background-color: #6441a5; }
-
-.title-text {
-  color: white;
-  font-size: 20px;
-  margin: 6; }
-
-.date-text {
-  color: white;
-  font-size: 16px; }
 
 /*# sourceMappingURL=index.css.map */

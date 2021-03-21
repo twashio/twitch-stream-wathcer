@@ -34,7 +34,7 @@ function getPublishTime(startAt) {
 async function getVideoes() {
   var videoes = [];
   const videoRef = await db.collection('videoes');
-  const snapshot = await videoRef.orderBy('publishTime', 'desc').limit(30).get();
+  const snapshot = await videoRef.orderBy('publishTime', 'desc').limit(40).get();
   await snapshot.forEach(element => {
     const data = element.data();
     const publishTimeStr = getPublishTime(data.publishTime);

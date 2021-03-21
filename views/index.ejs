@@ -18,10 +18,10 @@
         <li class="nav-item">
           <a class="nav-link" href="/about">About</a>
         </li>
+        <!-- 
         <li class="nav-item">
           <a class="nav-link" href="/news">News</a>
         </li>
-        <!-- 
           <li class="nav-item">
             <a class="nav-link" href="#">通知設定</a>
           </li>
@@ -34,22 +34,22 @@
     <!-- live status -->
     <div class="py-5 text-center container">
       <% if (isLive == true) { %>
-      <p class="live-status">加藤純一さんは現在配信中です</p>
+      <p class="status-text">加藤純一さんは現在配信中です</p>
       <% } else { %>
-      <p class="live-status">加藤純一さんは現在配信していないようです</p>
+      <p class="status-text">加藤純一さんは現在配信していないようです</p>
       <% } %>
     </div>
 
     <!-- video windows -->
-    <div class="album py-5 bg-light">
+    <div class="album py-3 bg-light">
       <div class="container">
-        <p class="intro-video text-center">配信一覧はこちら</p>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <p class="intro-text text-center">配信一覧はこちら</p>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3">
           <% for( let i = 0; i < videoes.length; i++ ) { %>
           <% var video = videoes[i] %>
           <div class="col py-1">
             <a href=<%- video.url %> target="_blank">
-              <div class="card shadow-sm desc-card">
+              <div class="card shadow-sm">
                 <img src=<%- video.thumbnail %> class="bd-placeholder-img card-img-top" width="100%">
                 <div class="card-body <%- video.platform %>">
                   <p class="card-text title-text">『<%- video.title %>』</p>
