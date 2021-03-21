@@ -1,13 +1,10 @@
 a {
-  color: #000000;
   text-decoration: none; }
 
 a:visited {
-  color: #000000;
   text-decoration: none; }
 
 a:hover {
-  color: #000000;
   text-decoration: none; }
 
 .live-status {
@@ -15,19 +12,24 @@ a:hover {
   margin: 0; }
 
 .intro-video {
-  font-size: 18px;
-  text-align: center; }
+  font-size: 18px; }
+
+.desc-card {
+  height: 100%; }
 
 .Youtube {
-  background-color: #ffcccc; }
+  background-color: #ff0000; }
 
 .Twitch {
-  background-color: #edc7ff; }
+  background-color: #6441a5; }
 
-.title {
-  margin: 0; }
+.title-text {
+  color: white;
+  font-size: 20px;
+  margin: 6; }
 
-.desc {
-  height: 100%; }
+.date-text {
+  color: white;
+  font-size: 16px; }
 
 /*# sourceMappingURL=index.css.map */

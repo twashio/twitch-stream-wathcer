@@ -12,7 +12,7 @@
 
 <body>
   <header>
-    <nav class="navbar navbar-expand-sm bg-info navbar-dark">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
       <a class="navbar-brand" href="/">加藤純一ライブ情報</a>
       <ul class="navbar-nav">
         <li class="nav-item">
@@ -34,30 +34,35 @@
     <!-- live status -->
     <div class="py-5 text-center container">
       <% if (isLive == true) { %>
-      <p class="live-status">加藤純一さんは現在配信中です。</p>
+      <p class="live-status">加藤純一さんは現在配信中です</p>
       <% } else { %>
-      <p class="live-status">加藤純一さんは現在配信していないようです。</p>
+      <p class="live-status">加藤純一さんは現在配信していないようです</p>
       <% } %>
     </div>
 
     <!-- video windows -->
     <div class="album py-5 bg-light">
       <div class="container">
-        <p class="intro-video">こちらもご覧下さい。</p>
+        <p class="intro-video text-center">配信一覧はこちら</p>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-          <% videoes.forEach(video => { %>
+          <% for( let i = 0; i < videoes.length; i++ ) { %>
+          <% var video = videoes[i] %>
           <div class="col py-1">
             <a href=<%- video.url %> target="_blank">
-              <div class="card shadow-sm desc">
+              <div class="card shadow-sm desc-card">
                 <img src=<%- video.thumbnail %> class="bd-placeholder-img card-img-top" width="100%">
                 <div class="card-body <%- video.platform %>">
-                  <p class="card-text title"><%- video.title %></p>
-                  <p class="card-text"><%- video.publishTime %></p>
+                  <p class="card-text title-text">『<%- video.title %>』</p>
+                  <% if (isLive == true && i == 0) { %>
+                  <p class="card-text date-text">&nbsp;<%- video.publishTime %>から配信中</p>
+                  <% } else { %>
+                  <p class="card-text date-text">&nbsp;<%- video.publishTime %>にライブ配信</p>
+                  <% } %>
                 </div>
               </div>
             </a>
           </div>
-          <% }) %>
+          <% } %>
         </div>
       </div>
     </div>
