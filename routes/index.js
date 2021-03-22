@@ -49,7 +49,7 @@ router.get('/', async function (req, res, next) {
   const ref = await db.collection('liveStatus').doc('liveStatus');
   const doc = await ref.get();
   res.render('index', {
-    isLive: doc.data().Youtube || doc.data().Twitch,
+    isLive: doc.data().Youtube || doc.data().Twitch || doc.data().niconico,
     videoes: videoes
   });
 });
