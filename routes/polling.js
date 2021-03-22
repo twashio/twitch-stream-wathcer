@@ -44,12 +44,12 @@ async function pollYoutube() {
     const liveJson = await liveRes.json();
     const snippet = liveJson.items[0].snippet;
     if (snippet.liveBroadcastContent == 'live') {
-      if (liveStatusDoc.data().isLive == false) {
+      if (liveStatusDoc.data().Youtube == false) {
 
         // update live sttus
         db.runTransaction(async (transaction) => {
           transaction.update(liveStatusRef, {
-            isLive: true
+            Youtube: true
           });
         });
 
@@ -68,7 +68,7 @@ async function pollYoutube() {
       // update live status
       db.runTransaction(async (transaction) => {
         transaction.update(liveStatusRef, {
-          isLive: false
+          Youtube: false
         });
       });
       return true;
@@ -91,12 +91,12 @@ async function pollTwitch() {
     const videoJson = await videoRes.json();
     const videoData = videoJson.data[0];
     if (videoData.thumbnail_url == "") {
-      if (liveStatusDoc.data().isLive == false) {
+      if (liveStatusDoc.data().Twitch == false) {
 
         // update live status
         db.runTransaction(async (transaction) => {
           transaction.update(liveStatusRef, {
-            isLive: true
+            Twitch: true
           });
         });
 
@@ -125,7 +125,7 @@ async function pollTwitch() {
       // update live status
       db.runTransaction(async (transaction) => {
         transaction.update(liveStatusRef, {
-          isLive: false
+          Twitch: false
         });
       });
     }
