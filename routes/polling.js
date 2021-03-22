@@ -59,7 +59,7 @@ async function pollYoutube() {
           publishTime: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
           thumbnail: snippet.thumbnails.medium.url,
           title: snippet.title,
-          url: 'https://www.youtube.com/watch?v=' + params.id.videoId
+          url: 'https://www.youtube.com/watch?v=' + liveJson.items[0].id.videoId
         };
         db.collection('videoes').add(data);
       }
@@ -74,6 +74,7 @@ async function pollYoutube() {
       return true;
     }
   } catch (error) {
+    console.log(error)
     return false;
   }
 }
@@ -131,6 +132,7 @@ async function pollTwitch() {
     }
     return true;
   } catch (error) {
+    console.log(error);
     return false;
   }
 }
