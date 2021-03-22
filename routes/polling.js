@@ -13,7 +13,7 @@ async function getYtKey() {
   var key = "";
   const keysRef = await db.collection('keys');
   const snapshot = await keysRef.orderBy('latest_used', 'asc').limit(1).get();
-  await snapshot.forEach(async function (doc) {
+  await snapshot.forEach(async doc => {
 
     // get api key
     const keyData = doc.data();
@@ -22,7 +22,7 @@ async function getYtKey() {
     // update latest used time
     const id = doc.id;
     const transRef = await db.collection('keys').doc(id);
-    db.runTransaction(async (transaction) => {
+    db.runTransaction(async transaction => {
       transaction.update(transRef, {
         latest_used: Firestore.Timestamp.fromDate(new Date())
       })
@@ -47,7 +47,7 @@ async function pollYoutube() {
       if (liveStatusDoc.data().Youtube == false) {
 
         // update live sttus
-        db.runTransaction(async (transaction) => {
+        db.runTransaction(async transaction => {
           transaction.update(liveStatusRef, {
             Youtube: true
           });
@@ -66,7 +66,7 @@ async function pollYoutube() {
     } else {
 
       // update live status
-      db.runTransaction(async (transaction) => {
+      db.runTransaction(async transaction => {
         transaction.update(liveStatusRef, {
           Youtube: false
         });
@@ -94,7 +94,7 @@ async function pollTwitch() {
       if (liveStatusDoc.data().Twitch == false) {
 
         // update live status
-        db.runTransaction(async (transaction) => {
+        db.runTransaction(async transaction => {
           transaction.update(liveStatusRef, {
             Twitch: true
           });
@@ -123,7 +123,7 @@ async function pollTwitch() {
     } else {
 
       // update live status
-      db.runTransaction(async (transaction) => {
+      db.runTransaction(async transaction => {
         transaction.update(liveStatusRef, {
           Twitch: false
         });
@@ -136,7 +136,7 @@ async function pollTwitch() {
 }
 
 // POST DB update
-router.post('/', async function (req, res, next) {
+router.post('/', async (req, res, next) => {
   const ytRes = await pollYoutube();
   const twiRes = await pollTwitch();
   if (ytRes * twiRes) {
