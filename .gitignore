@@ -4,4 +4,3 @@ appengine-generated/
 # Others
 **/node_modules/**
 package-lock.json
-key.json
