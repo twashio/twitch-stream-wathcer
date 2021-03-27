@@ -35,43 +35,47 @@ async function pollYoutube() {
   const liveStatusRef = await db.collection('liveStatus').doc('liveStatus');
   const liveStatusDoc = await liveStatusRef.get();
   const key = await getYtKey();
-
+  var internalLiveStatus = false;
 
   // send request to Youtube Data API
-  const request = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=1&key=' + key;
+  const request = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=5&key=' + key;
   const liveRes = await fetch(request);
   const liveJson = await liveRes.json();
-  const snippet = liveJson.items[0].snippet;
-  if (snippet.liveBroadcastContent == 'live') {
-    if (liveStatusDoc.data().Youtube == false) {
+  liveJson.items.forEach(async item => {
+    const snippet = item.snippet;
+    if (snippet.liveBroadcastContent == 'live') {
 
-      // update live sttus
-      db.runTransaction(async transaction => {
-        transaction.update(liveStatusRef, {
-          Youtube: true
+      // update internal live status
+      internalLiveStatus = true;
+
+      if (liveStatusDoc.data().Youtube == false) {
+
+        // update live sttus
+        db.runTransaction(async transaction => {
+          transaction.update(liveStatusRef, {
+            Youtube: true
+          });
         });
-      });
 
-      // add stream to DB
-      const data = {
-        platform: 'Youtube',
-        publishTime: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
-        thumbnail: snippet.thumbnails.medium.url,
-        title: snippet.title,
-        url: 'https://www.youtube.com/watch?v=' + liveJson.items[0].id.videoId
-      };
-      db.collection('videoes').add(data);
+        // add stream to DB
+        const data = {
+          platform: 'Youtube',
+          publishTime: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
+          thumbnail: snippet.thumbnails.medium.url,
+          title: snippet.title,
+          url: 'https://www.youtube.com/watch?v=' + liveJson.items[0].id.videoId
+        };
+        db.collection('videoes').add(data);
+      }
     }
-  } else {
-    if (liveStatusDoc.data().Youtube == true) {
-
-      // update live status
-      db.runTransaction(async transaction => {
-        transaction.update(liveStatusRef, {
-          Youtube: false
-        });
+  });
+  if (internalLiveStatus == false && liveStatusDoc.data().Youtube == true) {
+    // update live status
+    db.runTransaction(async transaction => {
+      transaction.update(liveStatusRef, {
+        Youtube: false
       });
-    }
+    });
   }
   return true;
 }
