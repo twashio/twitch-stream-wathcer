@@ -127,24 +127,32 @@ async function pollTwitch() {
       // get latest video document reference from videoes collection
       const videoesRef = await db.collection('videoes');
       const snapshot = await videoesRef.orderBy('publishTime', 'desc').limit(1).get();
-      const doneStreamRef = await db.collection('videoes').doc(snapshot[0].id);
-
-      // get thumbnail url from video endpoint
-      const videoRes = await fetch('https://api.twitch.tv/helix/videos?user_id=545050196&first=1', {
-        headers: {
-          'client-id': '5s36fvb8xzlkxyoab9v24nc4iqtv38',
-          'authorization': 'Bearer a38j0sfozk34i37fdgpnula9omwo2s'
-        }
+      var doneStreamRef;
+      snapshot.forEach(async element => {
+        console.log(element);
+        doneStreamRef = await db.collection('videoes').doc(element.id);
       });
-      const videoJson = await videoRes.json();
-      const videoThumbnail = videoJson.data[0].thumbnail_url.replace('%{width}x%{height}', '320x180');
 
-      // replace thumbnail url
-      db.runTransaction(async transaction => {
-        transaction.update(doneStreamRef, {
-          thumbnail: videoThumbnail
+      const doneStreamDoc = await doneStreamRef.get();
+      if (doneStreamDoc.data().platform == 'Twitch') {
+
+        // get thumbnail url from video endpoint
+        const videoRes = await fetch('https://api.twitch.tv/helix/videos?user_id=545050196&first=1', {
+          headers: {
+            'client-id': '5s36fvb8xzlkxyoab9v24nc4iqtv38',
+            'authorization': 'Bearer a38j0sfozk34i37fdgpnula9omwo2s'
+          }
         });
-      });
+        const videoJson = await videoRes.json();
+        const videoThumbnail = videoJson.data[0].thumbnail_url.replace('%{width}x%{height}', '320x180');
+
+        // replace thumbnail url
+        db.runTransaction(async transaction => {
+          transaction.update(doneStreamRef, {
+            thumbnail: videoThumbnail
+          });
+        });
+      }
 
       // update live status
       db.runTransaction(async transaction => {
