@@ -41,6 +41,8 @@ async function pollYoutube() {
   const request = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=5&key=' + key;
   const liveRes = await fetch(request);
   const liveJson = await liveRes.json();
+
+  // use forEach beacuse Youtube live publish time can be earlier or later
   liveJson.items.forEach(async item => {
     const snippet = item.snippet;
     if (snippet.liveBroadcastContent == 'live') {
@@ -121,46 +123,33 @@ async function pollTwitch() {
       };
       db.collection('videoes').add(docData);
     }
-  } else {
-    if (liveStatusDoc.data().Twitch == true) {
+  } else if (liveStatusDoc.data().Twitch == true) {
 
-      // get latest video document reference from videoes collection
-      const videoesRef = await db.collection('videoes');
-      const snapshot = await videoesRef.orderBy('publishTime', 'desc').limit(1).get();
-      var doneStreamRef;
-      snapshot.forEach(async element => {
-        console.log(element);
-        doneStreamRef = await db.collection('videoes').doc(element.id);
-      });
+    // get latest video document reference from videoes collection
+    const videoesRef = await db.collection('videoes');
+    const snapshot = await videoesRef.orderBy('publishTime', 'desc').limit(1).get();
+    var doneStreamRef;
+    await snapshot.forEach(async element => {
+      doneStreamRef = await db.collection('videoes').doc(element.id);
+    });
 
-      const doneStreamDoc = await doneStreamRef.get();
-      if (doneStreamDoc.data().platform == 'Twitch') {
+    const doneStreamDoc = await doneStreamRef.get();
+    if (doneStreamDoc.data().platform == 'Twitch') {
 
-        // get thumbnail url from video endpoint
-        const videoRes = await fetch('https://api.twitch.tv/helix/videos?user_id=545050196&first=1', {
-          headers: {
-            'client-id': '5s36fvb8xzlkxyoab9v24nc4iqtv38',
-            'authorization': 'Bearer a38j0sfozk34i37fdgpnula9omwo2s'
-          }
-        });
-        const videoJson = await videoRes.json();
-        const videoThumbnail = videoJson.data[0].thumbnail_url.replace('%{width}x%{height}', '320x180');
-
-        // replace thumbnail url
-        db.runTransaction(async transaction => {
-          transaction.update(doneStreamRef, {
-            thumbnail: videoThumbnail
-          });
-        });
-      }
-
-      // update live status
+      // replace thumbnail url
       db.runTransaction(async transaction => {
-        transaction.update(liveStatusRef, {
-          Twitch: false
+        transaction.update(doneStreamRef, {
+          thumbnail: videoData.thumbnail_url.replace('%{width}x%{height}', '320x180')
         });
       });
     }
+
+    // update live status
+    db.runTransaction(async transaction => {
+      transaction.update(liveStatusRef, {
+        Twitch: false
+      });
+    });
   }
   return true;
 }
