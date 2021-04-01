@@ -1,8 +1,17 @@
-body {
-  font-family: 'Noto Sans JP', sans-serif; }
+a {
+  color: #3ea6ff; }
 
 a:hover {
+  color: #3ea6ff;
   text-decoration: none; }
+
+body {
+  background-color: #202020;
+  color: white;
+  font-family: 'Noto Sans JP', sans-serif; }
+
+.navbar {
+  background-color: #282828; }
 
 .about {
   margin-bottom: 40px; }

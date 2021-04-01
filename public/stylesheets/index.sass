@@ -1,21 +1,9 @@
-body
-  font-family: 'Noto Sans JP', sans-serif
+$main-bg-color: #202020
+$edge-bg-color: #282828
 
-a
-  text-decoration: none
-
-a:visited
-  text-decoration: none
-
-a:hover
-  text-decoration: none
-
-.status-text
-  font-size: 20px
-  margin: 0
-
-.intro-text
-  font-size: 20px
+@media ( min-width: 1200px )
+  .container-xl
+    max-width: 1600px
 
 @media ( max-width: 576px )
   .status-text
@@ -23,6 +11,37 @@ a:hover
 
   .intro-text
     font-size: 18px
+
+a
+  color: white
+  text-decoration: none
+
+a:visited
+  text-decoration: none
+
+a:hover
+  color: white
+  text-decoration: none
+
+body
+  background-color: $main-bg-color
+  font-family: 'Noto Sans JP', sans-serif
+
+main
+  color: white
+
+.navbar
+  background-color: $edge-bg-color
+
+.card
+  background-color: $main-bg-color
+
+.status-text
+  font-size: 20px
+  margin: 0
+
+.intro-text
+  font-size: 20px
 
 .col
   padding: 4px
@@ -34,7 +53,6 @@ a:hover
   padding: 12px
 
 .card-text
-  color: white
   margin: 0
 
 .title-text
@@ -42,16 +60,3 @@ a:hover
 
 .date-text
   font-size: 14px
-
-.Youtube
-  background-color: #ff0000
-
-.Twitch
-  background-color: #6441a5
-
-.niconico
-  background-color: #999999
-
-@media ( min-width: 1200px )
-  .container-xl
-    max-width: 1600px
