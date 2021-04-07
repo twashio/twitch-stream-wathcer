@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Firestore = require('@google-cloud/firestore');
-const moment = require('moment');
-const { end } = require('iso8601-duration');
+const moment = require('moment-timezone');
 
 // setup Firestore
 const db = new Firestore({
@@ -24,7 +23,7 @@ class videoClass {
 
 // get starting time
 function getStartedAt(startedAt) {
-  const startingTime = moment(new Date(startedAt._seconds * 1000)).format('YYYY/MM/DD HH:mm');
+  const startingTime = moment(new Date(startedAt._seconds * 1000)).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
   return startingTime;
 }
 
@@ -33,7 +32,7 @@ function getEndedAt(endedAt) {
   if (endedAt == null) {
     return null;
   } else {
-    const endingTime = moment(new Date(endedAt._seconds * 1000)).format('YYYY/MM/DD HH:mm');
+    const endingTime = moment(new Date(endedAt._seconds * 1000)).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
     return endingTime;
   }
 }
