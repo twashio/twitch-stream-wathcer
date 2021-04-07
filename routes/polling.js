@@ -1,7 +1,21 @@
-var express = require("express");
-var fetch = require('node-fetch');
-var router = express.Router();
-var Firestore = require('@google-cloud/firestore');
+const express = require("express");
+const fetch = require('node-fetch');
+const router = express.Router();
+const Firestore = require('@google-cloud/firestore');
+const iso8601_duration = require('iso8601-duration');
+
+// class of video datas
+class videoClass {
+  constructor(title, thumbnailUrl, id, url, startedAt, endedAt, platform) {
+    this.title = title;
+    this.thumbnailUrl = thumbnailUrl;
+    this.id = id;
+    this.url = url;
+    this.startedAt = startedAt;
+    this.endedAt = endedAt;
+    this.platform = platform;
+  }
+}
 
 // setup Firestore
 const db = new Firestore({
@@ -9,6 +23,7 @@ const db = new Firestore({
   keyFilename: './key.json',
 });
 
+// get youtube api key from DB
 async function getYtKey() {
   var key = "";
   const keysRef = await db.collection('keys');
@@ -31,19 +46,19 @@ async function getYtKey() {
   return key;
 }
 
+// poll youtube live
 async function pollYoutube() {
   const liveStatusRef = await db.collection('liveStatus').doc('liveStatus');
   const liveStatusDoc = await liveStatusRef.get();
   const key = await getYtKey();
-  var internalLiveStatus = false;
+  let internalLiveStatus = false;
 
   // send request to Youtube Data API
-  const request = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=5&key=' + key;
-  const liveRes = await fetch(request);
-  const liveJson = await liveRes.json();
+  const liveRes = await fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCx1nAvtVDIsaGmCMSe8ofsQtype=video&order=date&maxResults=5&key=' + key);
+  const liveResJson = await liveRes.json();
 
   // use forEach beacuse Youtube live publish time can be earlier or later
-  liveJson.items.forEach(async item => {
+  liveResJson.items.forEach(async item => {
     const snippet = item.snippet;
     if (snippet.liveBroadcastContent == 'live') {
 
@@ -61,17 +76,49 @@ async function pollYoutube() {
 
         // add stream to DB
         const data = {
-          platform: 'Youtube',
-          publishTime: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
-          thumbnail: snippet.thumbnails.medium.url,
           title: snippet.title,
-          url: 'https://www.youtube.com/watch?v=' + liveJson.items[0].id.videoId
-        };
+          thumbnailUrl: snippet.thumbnails.medium.url,
+          id: item.id.videoId,
+          url: 'https://www.youtube.com/watch?v=' + item.id.videoId,
+          startedAt: Firestore.Timestamp.fromDate(new Date(snippet.publishTime)),
+          endedAt: null,
+          platform: 'Youtube'
+        }
         db.collection('videoes').add(data);
       }
     }
   });
+
+  // when streams goes offline
   if (internalLiveStatus == false && liveStatusDoc.data().Youtube == true) {
+
+    // get a reference of latest stocked stream
+    const videoesRef = await db.collection('videoes');
+    const snapshot = await videoesRef.orderBy('startedAt', 'desc').limit(1).get();
+    let doneStreamRef;
+    await snapshot.forEach(async element => {
+      doneStreamRef = await db.collection('videoes').doc(element.id);
+    });
+    const doneStreamDoc = await doneStreamRef.get();
+    // Yout can access to data with colon (e.g doneStreamData.hoge)
+    const doneStreamData = await doneStreamDoc.data();
+
+    // get youtube video duration
+    const ytVideoRes = await fetch('https://www.googleapis.com/youtube/v3/videos?part=contentDetails&key=AIzaSyBWBvqdDNzVxF44dXxBWvN8yv2RLeTXKxw&id=' + doneStreamData.id);
+    const ytVideoResJson = await ytVideoRes.json();
+    const duration = ytVideoResJson.items[0].contentDetails.duration;
+
+    // convert ending time from duration to seconds
+    const durationSec = iso8601_duration.toSeconds(iso8601_duration.parse(duration));
+    const endedDate = new Date((doneStreamData.startedAt._seconds + durationSec) * 1000);
+
+    // add ending time
+    db.runTransaction(async transaction => {
+      transaction.update(doneStreamRef, {
+        endedAt: Firestore.Timestamp.fromDate(endedDate)
+      });
+    });
+
     // update live status
     db.runTransaction(async transaction => {
       transaction.update(liveStatusRef, {
@@ -82,6 +129,7 @@ async function pollYoutube() {
   return true;
 }
 
+// poll twitch stream
 async function pollTwitch() {
   const liveStatusRef = await db.collection('liveStatus').doc('liveStatus');
   const liveStatusDoc = await liveStatusRef.get();
@@ -93,6 +141,7 @@ async function pollTwitch() {
   });
   const videoJson = await videoRes.json();
   const videoData = videoJson.data[0];
+
   if (videoData.thumbnail_url == "") {
     if (liveStatusDoc.data().Twitch == false) {
 
@@ -110,39 +159,51 @@ async function pollTwitch() {
           'authorization': 'Bearer a38j0sfozk34i37fdgpnula9omwo2s'
         }
       });
-      const streamJson = await streamRes.json();
-      const streamThumbnail = streamJson.data[0].thumbnail_url.replace('{width}x{height}', '320x180');
+      const streamResJson = await streamRes.json();
+      console.log(streamResJson);
+      const streamThumbnail = streamResJson.data[0].thumbnail_url.replace('{width}x{height}', '320x180');
 
       // add stream to DB
-      const docData = {
-        platform: 'Twitch',
-        publishTime: Firestore.Timestamp.fromDate(new Date(videoData.published_at)),
-        thumbnail: streamThumbnail,
+      const data = {
         title: videoData.title,
-        url: videoData.url
-      };
-      db.collection('videoes').add(docData);
+        thumbnailUrl: streamThumbnail,
+        id: videoData.id,
+        url: videoData.url,
+        startedAt: Firestore.Timestamp.fromDate(new Date(videoData.published_at)),
+        endedAt: null,
+        platform: 'Twitch'
+      }
+      db.collection('videoes').add(data);
     }
+
+    // when stream goes offline
   } else if (liveStatusDoc.data().Twitch == true) {
 
     // get latest video document reference from videoes collection
     const videoesRef = await db.collection('videoes');
-    const snapshot = await videoesRef.orderBy('publishTime', 'desc').limit(1).get();
-    var doneStreamRef;
+    const snapshot = await videoesRef.orderBy('startedAt', 'desc').limit(1).get();
+    let doneStreamRef;
     await snapshot.forEach(async element => {
       doneStreamRef = await db.collection('videoes').doc(element.id);
     });
 
-    const doneStreamDoc = await doneStreamRef.get();
-    if (doneStreamDoc.data().platform == 'Twitch') {
+    // convert ending time from duration to seconds
+    let duration = videoData.duration;
+    duration = 'PT' + duration;
+    duration = duration.replace('h', 'H');
+    duration = duration.replace('m', 'M');
+    duration = duration.replace('s', 'S');
+    const durationSec = iso8601_duration.toSeconds(iso8601_duration.parse(duration));
+    const startingDate = new Date(videoData.published_at);
+    const endedDate = new Date(startingDate.getTime() + (durationSec * 1000));
 
-      // replace thumbnail url
-      db.runTransaction(async transaction => {
-        transaction.update(doneStreamRef, {
-          thumbnail: videoData.thumbnail_url.replace('%{width}x%{height}', '320x180')
-        });
+    // replace thumbnail url and ending time
+    db.runTransaction(async transaction => {
+      transaction.update(doneStreamRef, {
+        endedAt: Firestore.Timestamp.fromDate(endedDate),
+        thumbnailUrl: videoData.thumbnail_url.replace('%{width}x%{height}', '320x180')
       });
-    }
+    });
 
     // update live status
     db.runTransaction(async transaction => {
@@ -157,7 +218,7 @@ async function pollTwitch() {
 // POST DB update
 router.get('/', async (req, res, next) => {
   await pollYoutube();
-  await pollTwitch();
+  // await pollTwitch();
   res.sendStatus(200);
 });
 

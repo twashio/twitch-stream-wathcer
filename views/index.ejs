@@ -23,7 +23,7 @@
       <a class="navbar-brand" href="/">加藤純一ライブ情報</a>
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="/about">About</a>
+          <!-- <a class="nav-link" href="/about">About</a> -->
         </li>
       </ul>
     </nav>
@@ -39,23 +39,31 @@
       <% } %>
     </div>
 
-    <!-- video windows -->
+    <!-- video windows album -->
     <div class="album py-3">
       <div class="container-xl">
         <p class="intro-text text-center">直近の配信一覧はこちら</p>
+
+        <!-- album cols -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
           <% for( let i = 0; i < videoes.length; i++ ) { %>
           <% var video = videoes[i] %>
           <div class="col py-1">
             <a href=<%- video.url %> target="_blank">
               <div class="card">
-                <img src=<%- video.thumbnail %> class="bd-placeholder-img card-img-top" width="100%" alt="thumbnail">
+                
+                <!-- thumbnail img -->
+                <img src=<%- video.thumbnailUrl %> class="bd-placeholder-img card-img-top" width="100%" alt="thumbnail">
                 <div class="card-body">
+
+                  <!-- title -->
                   <p class="card-text title-text"><span class="<%- video.platform %>"></span>『<%- video.title %>』</p>
+
+                  <!-- display date -->
                   <% if (isLive == true && i == 0) { %>
-                  <p class="card-text date-text">&nbsp;<%- video.publishTime %>から配信中</p>
+                  <p class="card-text date-text">&nbsp;<%- video.startedAt %> 〜 配信中</p>
                   <% } else { %>
-                  <p class="card-text date-text">&nbsp;<%- video.publishTime %>にライブ配信</p>
+                  <p class="card-text date-text">&nbsp;<%- video.startedAt %> 〜 <%- video.endedAt %> </p>
                   <% } %>
                 </div>
               </div>

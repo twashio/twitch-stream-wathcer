@@ -1,6 +1,8 @@
-var express = require('express');
-var router = express.Router();
-var Firestore = require('@google-cloud/firestore');
+const express = require('express');
+const router = express.Router();
+const Firestore = require('@google-cloud/firestore');
+const moment = require('moment');
+const { end } = require('iso8601-duration');
 
 // setup Firestore
 const db = new Firestore({
@@ -8,46 +10,59 @@ const db = new Firestore({
   keyFilename: './key.json',
 });
 
-class videoDataClass {
-  constructor(platform, publishTime, thumbnail, title, url) {
-    this.platform = platform;
-    this.publishTime = publishTime;
-    this.thumbnail = thumbnail;
+class videoClass {
+  constructor(title, thumbnailUrl, id, url, startedAt, endedAt, platform) {
     this.title = title;
+    this.thumbnailUrl = thumbnailUrl;
+    this.id = id;
     this.url = url;
+    this.startedAt = startedAt;
+    this.endedAt = endedAt;
+    this.platform = platform;
   }
 }
 
-function getPublishTime(startAt) {
-  const diffSec = Math.floor(new Date().getTime() / 1000) - startAt._seconds;
-  var publishTimeStr = "";
-  if (diffSec < 60 * 60) {
-    publishTimeStr = String(Math.floor(diffSec / 60)) + '分前';
-  } else if (diffSec < 60 * 60 * 24) {
-    publishTimeStr = String(Math.floor(diffSec / (60 * 60))) + '時間前';
+// get starting time
+function getStartedAt(startedAt) {
+  const startingTime = moment(new Date(startedAt._seconds * 1000)).format('YYYY/MM/DD HH:mm');
+  return startingTime;
+}
+
+// get ending time
+function getEndedAt(endedAt) {
+  if (endedAt == null) {
+    return null;
   } else {
-    publishTimeStr = String(Math.floor(diffSec / (60 * 60 * 24))) + '日前';
+    const endingTime = moment(new Date(endedAt._seconds * 1000)).format('YYYY/MM/DD HH:mm');
+    return endingTime;
   }
-  return publishTimeStr;
 }
 
+// get streams and videoes form DB
 async function getVideoes() {
   var videoes = [];
   const videoRef = await db.collection('videoes');
-  const snapshot = await videoRef.orderBy('publishTime', 'desc').limit(100).get();
+  const snapshot = await videoRef.orderBy('startedAt', 'desc').limit(10).get();
   await snapshot.forEach(element => {
     const data = element.data();
-    const publishTimeStr = getPublishTime(data.publishTime);
-    videoes.push(new videoDataClass(data.platform, publishTimeStr, data.thumbnail, data.title, data.url));
+    const startedAt = getStartedAt(data.startedAt);
+    const endedAt = getEndedAt(data.endedAt);
+    videoes.push(new videoClass(data.title, data.thumbnailUrl, data.id, data.url, startedAt, endedAt, data.platform));
   });
   return videoes;
 }
 
 // GET home page
 router.get('/', async function (req, res, next) {
+
+  // get videos
   const videoes = await getVideoes();
+
+  // get live status
   const ref = await db.collection('liveStatus').doc('liveStatus');
   const doc = await ref.get();
+
+  // rendering
   res.render('index', {
     isLive: doc.data().Youtube || doc.data().Twitch || doc.data().niconico,
     videoes: videoes
