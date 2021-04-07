@@ -218,7 +218,7 @@ async function pollTwitch() {
 // POST DB update
 router.get('/', async (req, res, next) => {
   await pollYoutube();
-  // await pollTwitch();
+  await pollTwitch();
   res.sendStatus(200);
 });
 
