@@ -11,6 +11,7 @@ var indexRouter = require('./routes/index');
 // var aboutRouter = require('./routes/about');
 var searchTwitterRouter = require('./routes/seachTwitter');
 var searchTwitchRouter = require('./routes/searchTwitch');
+var searchYoutubeRouter = require('./routes/searchYoutube');
 
 // initialize express
 var app = express();
@@ -37,6 +38,7 @@ app.use('/', indexRouter);
 // app.use('/about', aboutRouter);
 app.use('/searchTwitch', searchTwitchRouter);
 app.use('/searchTwitter', searchTwitterRouter);
+app.use('/searchYoutube', searchYoutubeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
