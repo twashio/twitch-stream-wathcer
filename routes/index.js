@@ -41,7 +41,7 @@ function getEndedAt(endedAt) {
 async function getVideoes() {
   var videoes = [];
   const videoRef = await db.collection('videoes');
-  const snapshot = await videoRef.orderBy('startedAt', 'desc').limit(10).get();
+  const snapshot = await videoRef.orderBy('startedAt', 'desc').limit(20).get();
   await snapshot.forEach(element => {
     const data = element.data();
     const startedAt = getStartedAt(data.startedAt);

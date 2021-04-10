@@ -5,10 +5,14 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
 
+// get routers
 var indexRouter = require('./routes/index');
-var pollingRouter = require('./routes/polling');
+// var pollingRouter = require('./routes/polling');
 // var aboutRouter = require('./routes/about');
+var searchTwitterRouter = require('./routes/seachTwitter');
+var searchTwitchRouter = require('./routes/searchTwitch');
 
+// initialize express
 var app = express();
 
 // view engine setup
@@ -27,9 +31,12 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// set routing
 app.use('/', indexRouter);
-app.use('/polling', pollingRouter);
+// app.use('/polling', pollingRouter);
 // app.use('/about', aboutRouter);
+app.use('/searchTwitch', searchTwitchRouter);
+app.use('/searchTwitter', searchTwitterRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
