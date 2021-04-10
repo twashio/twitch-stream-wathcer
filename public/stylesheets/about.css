@@ -1,39 +1,31 @@
 a {
-  color: #3ea6ff;
-}
+  color: #3ea6ff; }
 
 a:hover {
   color: #3ea6ff;
-  text-decoration: none;
-}
+  text-decoration: none; }
 
 body {
   background-color: #202020;
   color: white;
-  font-family: 'Noto Sans JP', sans-serif;
-}
+  font-family: 'Noto Sans JP', sans-serif; }
 
 .navbar {
-  background-color: #282828;
-}
+  background-color: #282828; }
 
 .about {
-  margin-bottom: 40px;
-}
+  margin-bottom: 40px; }
 
 .jk-account {
-  margin-bottom: 40px;
-}
+  margin-bottom: 40px; }
 
 .jk-account-intro {
-  margin-bottom: 8px;
-}
+  margin-bottom: 8px; }
 
 .account {
-  margin-bottom: 8px;
-}
+  margin-bottom: 8px; }
 
 .my-twi-intro {
-  margin-bottom: 8px;
-}
+  margin-bottom: 8px; }
+
 /*# sourceMappingURL=about.css.map */
