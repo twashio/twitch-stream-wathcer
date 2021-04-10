@@ -41,7 +41,8 @@ async function searchYoutube() {
   let internalLiveStatus = false;
 
   // send request to Youtube Data API
-  const liveRes = await fetch('https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCx1nAvtVDIsaGmCMSe8ofsQtype=video&order=date&maxResults=5&key=' + key);
+  const req = 'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCx1nAvtVDIsaGmCMSe8ofsQ&type=video&order=date&maxResults=5&key=' + key;
+  const liveRes = await fetch(req);
   const liveResJson = await liveRes.json();
 
   // use forEach beacuse Youtube live publish time can be earlier or later
