@@ -37,7 +37,7 @@ async function getApiKey() {
 async function searchYoutube() {
   const liveStatusRef = await db.collection('liveStatus').doc('liveStatus');
   const liveStatusDoc = await liveStatusRef.get();
-  const key = await getYtKey();
+  const key = await getApiKey();
   let internalLiveStatus = false;
 
   // send request to Youtube Data API
@@ -117,7 +117,7 @@ async function searchYoutube() {
 
 // set routing
 router.get('/', async (req, res, next) => {
-  await searchYoutube();
+  searchYoutube();
   res.sendStatus(200);
 });
 
