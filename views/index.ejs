@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html　lang="ja">
+<html lang="ja">
 
 <head>
   <!-- required meta tags -->
@@ -49,9 +49,9 @@
           <% for( let i = 0; i < videoes.length; i++ ) { %>
           <% var video = videoes[i] %>
           <div class="col py-1">
-            <a href=<%- video.url %> target="_blank">
+            <a href=<%- video.url %> target="_blank" rel="noopener noreferrer">
               <div class="card">
-                
+
                 <!-- thumbnail img -->
                 <img src=<%- video.thumbnailUrl %> class="bd-placeholder-img card-img-top" width="100%" alt="thumbnail">
                 <div class="card-body">
@@ -75,7 +75,7 @@
     </div>
   </main>
 
-  <footer class="text-muted py-5">
+  <footer class="py-5">
     <div class="container text-center">
       <p>Copyright (c) 2021 Tomcaaaaat</p>
     </div>
