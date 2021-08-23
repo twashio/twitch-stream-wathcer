@@ -7,7 +7,6 @@ var sassMiddleware = require('node-sass-middleware');
 
 // get routers
 var indexRouter = require('./routes/index');
-// var pollingRouter = require('./routes/polling');
 var aboutRouter = require('./routes/about');
 var searchTwitterRouter = require('./routes/seachTwitter');
 var searchTwitchRouter = require('./routes/searchTwitch');
@@ -36,7 +35,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // set routing
 app.use('/', indexRouter);
-// app.use('/polling', pollingRouter);
 app.use('/about', aboutRouter);
 app.use('/searchTwitch', searchTwitchRouter);
 app.use('/searchTwitter', searchTwitterRouter);
