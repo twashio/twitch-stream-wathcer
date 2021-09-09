@@ -5,19 +5,18 @@ const moment = require('moment-timezone');
 
 // setup Firestore
 const db = new Firestore({
-  projectId: 'unkochan-live-info',
-  keyFilename: './key.json',
+  projectId: '$PROJECTID',
+  keyFilename: '$KEY',
 });
 
 class videoClass {
-  constructor(title, thumbnailUrl, id, url, startedAt, endedAt, platform) {
+  constructor(title, thumbnailUrl, id, url, startedAt, endedAt) {
     this.title = title;
     this.thumbnailUrl = thumbnailUrl;
     this.id = id;
     this.url = url;
     this.startedAt = startedAt;
     this.endedAt = endedAt;
-    this.platform = platform;
   }
 }
 
@@ -46,7 +45,7 @@ async function getVideoes() {
     const data = element.data();
     const startedAt = getStartedAt(data.startedAt);
     const endedAt = getEndedAt(data.endedAt);
-    videoes.push(new videoClass(data.title, data.thumbnailUrl, data.id, data.url, startedAt, endedAt, data.platform));
+    videoes.push(new videoClass(data.title, data.thumbnailUrl, data.id, data.url, startedAt, endedAt));
   });
   return videoes;
 }
@@ -63,7 +62,7 @@ router.get('/', async function (req, res, next) {
 
   // rendering
   res.render('index', {
-    isLive: doc.data().Youtube || doc.data().Twitch || doc.data().niconico,
+    isLive: doc.data().isLive,
     videoes: videoes
   });
 });

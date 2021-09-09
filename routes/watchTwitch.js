@@ -6,38 +6,38 @@ const iso8601_duration = require('iso8601-duration');
 
 // setup Firestore
 const db = new Firestore({
-  projectId: 'unkochan-live-info',
-  keyFilename: './key.json',
+  projectId: '$PROJECTID',
+  keyFilename: '$KEY',
 });
 
-// search twitch stream
+// check twitch stream
 async function searchTwitch() {
   const liveStatusRef = await db.collection('liveStatus').doc('liveStatus');
   const liveStatusDoc = await liveStatusRef.get();
-  const videoRes = await fetch('https://api.twitch.tv/helix/videos?user_id=545050196&first=1', {
+  const videoRes = await fetch('https://api.twitch.tv/helix/videos?user_id=$USERID&first=1', {
     headers: {
-      'client-id': '5s36fvb8xzlkxyoab9v24nc4iqtv38',
-      'authorization': 'Bearer a38j0sfozk34i37fdgpnula9omwo2s'
+      'client-id': '$CLIENTID',
+      'authorization': '$TOKEN'
     }
   });
   const videoJson = await videoRes.json();
   const videoData = videoJson.data[0];
 
   if (videoData.thumbnail_url == "") {
-    if (liveStatusDoc.data().Twitch == false) {
+    if (liveStatusDoc.data().isLive == false) {
 
       // update live status
       db.runTransaction(async transaction => {
         transaction.update(liveStatusRef, {
-          Twitch: true
+          isLive: true
         });
       });
 
       // get thumbnail url from search endpoint
-      const streamRes = await fetch('https://api.twitch.tv/helix/streams?user_id=545050196&first=1', {
+      const streamRes = await fetch('https://api.twitch.tv/helix/streams?user_id=$USERID&first=1', {
         headers: {
-          'client-id': '5s36fvb8xzlkxyoab9v24nc4iqtv38',
-          'authorization': 'Bearer a38j0sfozk34i37fdgpnula9omwo2s'
+          'client-id': '$CLIENTID',
+          'authorization': '$TOKEN'
         }
       });
       const streamResJson = await streamRes.json();
@@ -52,13 +52,12 @@ async function searchTwitch() {
         url: videoData.url,
         startedAt: Firestore.Timestamp.fromDate(new Date(videoData.published_at)),
         endedAt: null,
-        platform: 'Twitch'
       }
       db.collection('videoes').add(data);
     }
 
     // when stream goes offline
-  } else if (liveStatusDoc.data().Twitch == true) {
+  } else if (liveStatusDoc.data().isLive == true) {
 
     // get latest video document reference from videoes collection
     const videoesRef = await db.collection('videoes');
@@ -89,7 +88,7 @@ async function searchTwitch() {
     // update live status
     db.runTransaction(async transaction => {
       transaction.update(liveStatusRef, {
-        Twitch: false
+        isLive: false
       });
     });
   }

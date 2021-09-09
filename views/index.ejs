@@ -5,7 +5,7 @@
   <!-- required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="加藤純一の配信情報をチェックできます。">
+  <meta name="description" content="Twitch Stream Watcher">
 
   <!-- external stylesheets -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -14,18 +14,13 @@
 
   <!-- internal stylesheets -->
   <link rel="stylesheet" href="/stylesheets/index.css">
-  <title>加藤純一ライブ情報</title>
+  <title>Twitch Stream Watcher</title>
 </head>
 
 <body>
   <header>
     <nav class="navbar navbar-expand-sm navbar-dark">
-      <a class="navbar-brand" href="/">加藤純一ライブ情報</a>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="/about">About</a>
-        </li>
-      </ul>
+      <a class="navbar-brand" href="/">Twitch Stream Watcher</a>
     </nav>
   </header>
 
@@ -33,16 +28,16 @@
     <!-- live status -->
     <div class="py-5 text-center container">
       <% if (isLive == true) { %>
-      <p class="status-text">加藤純一さんは現在配信中です</p>
+      <p class="status-text">$STREAMER is streaming now.</p>
       <% } else { %>
-      <p class="status-text">加藤純一さんは現在配信していないようです</p>
+      <p class="status-text">$STREAMER is not streaming now.</p>
       <% } %>
     </div>
 
     <!-- video windows album -->
     <div class="album py-3">
       <div class="container-xl">
-        <p class="intro-text text-center">直近の配信はこちら</p>
+        <p class="intro-text text-center">Link to the latest stream</p>
 
         <!-- album cols -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
@@ -57,11 +52,11 @@
                 <div class="card-body">
 
                   <!-- title -->
-                  <p class="card-text title-text"><span class="<%- video.platform %>"></span>『<%- video.title %>』</p>
+                  <p class="card-text title-text">【<%- video.title %>】</p>
 
                   <!-- display date -->
                   <% if (isLive == true && i == 0) { %>
-                  <p class="card-text date-text">&nbsp;<%- video.startedAt %> 〜 配信中</p>
+                  <p class="card-text date-text">&nbsp;<%- video.startedAt %> 〜 Now</p>
                   <% } else { %>
                   <p class="card-text date-text">&nbsp;<%- video.startedAt %> 〜 <%- video.endedAt %> </p>
                   <% } %>
@@ -75,16 +70,9 @@
     </div>
   </main>
 
-  <footer class="py-5">
-    <div class="container text-center">
-      <p>Copyright (c) 2021 Tomcaaaaat</p>
-    </div>
-  </footer>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
   </script>
-  <script src="/js/indexClient.js"></script>
 </body>
 
 </html>
